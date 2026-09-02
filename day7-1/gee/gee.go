@@ -29,6 +29,14 @@ type RouterGroup struct {
 	engine      *Engine       // 组需要有能访问router的能力，所以有一个指向engine的指针
 }
 
+func Default() *Engine {
+	engine := &Engine{router: newRouter()}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup} //engine.RouterGroup作为分组的根，在初始化的时候就放进去
+	engine.Use(Recovery())
+	return engine
+}
+
 // 初始化engine
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
